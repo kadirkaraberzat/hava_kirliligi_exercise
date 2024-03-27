@@ -23,8 +23,10 @@ Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](h
 Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişken sütun isimlerini içermelidir. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
 
 ```{r}
-# Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
-# havaK <- <kodu tamamla>
+# havaK <- read_excel("C:\\Users\\User3456\\Desktop\\Veri Detayları3_21_2024, 9_31_28 PM.xlsx")
+# rapor <- head(havaK, 10)
+# print(rapor)
+
 ```
 
 ## Egzersiz 2 - Veri Kalite Kontrolü
@@ -32,20 +34,27 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 ### Zaman sütunu
 Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 ```{r}
-#  <kodu tamamla>
+# time_column_index <- which(col_names == "Tarih")
+# col_names[time_column_index] <- "Time"
+# colnames(havaK) <- col_names
+
 ```
 
 
 *havaK$Time* adlı değişkendeki bütün verilerin **POSIXct** tipinde olmasını sağlayın. 
 
 ```{r}
-# <kodu tamamla>
+# havaK$Time <- as.POSIXct(havaK$Time, format = "%Y-%m-%d %H:%M:%S")
+
 ```
 
 *Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağlayın. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
 
 ```{r}
-# <kodu tamamla>
+# havaK[, -which(names(havaK) == "Time")] <- lapply(havaK[, -which(names(havaK) == "Time")], as.numeric)
+# rapor <- head(havaK, 10)
+# print(rapor)
+
 ```
 
 ## Egzersiz 3 - Veri Görselleme
