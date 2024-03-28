@@ -23,9 +23,11 @@ Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](h
 Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişken sütun isimlerini içermelidir. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
 
 ```{r}
-# havaK <- read_excel("C:\\Users\\User3456\\Desktop\\Veri Detayları3_21_2024, 9_31_28 PM.xlsx")
-# rapor <- head(havaK, 10)
-# print(rapor)
+library(readxl)
+havaK <- read_excel("C:\\Users\\User3456\\Desktop\\Veri Detayları3_28_2024, 2_07_53 PM.xlsx")
+rapor <- head(havaK, 10)
+print(rapor)
+View(havaK)
 
 ```
 
@@ -34,9 +36,7 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 ### Zaman sütunu
 Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 ```{r}
-# time_column_index <- which(col_names == "Tarih")
-# col_names[time_column_index] <- "Time"
-# colnames(havaK) <- col_names
+ names(havaK)[names(havaK) == "Tarih"] <- "Time"
 
 ```
 
@@ -44,26 +44,38 @@ Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 *havaK$Time* adlı değişkendeki bütün verilerin **POSIXct** tipinde olmasını sağlayın. 
 
 ```{r}
-# havaK$Time <- as.POSIXct(havaK$Time, format = "%Y-%m-%d %H:%M:%S")
+# <kodu tamamla>
 
 ```
 
 *Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağlayın. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
 
 ```{r}
-# havaK[, -which(names(havaK) == "Time")] <- lapply(havaK[, -which(names(havaK) == "Time")], as.numeric)
-# rapor <- head(havaK, 10)
-# print(rapor)
+names(havaK)[names(havaK) == "Çanakkale"] <- "PM10"
+names(havaK)[names(havaK) == "...3"] <- "PM2.5"
+havaK$PM2.5 <- gsub(",",".",havaK$PM2.5)
+havaK$PM10 <- gsub(",",".",havaK$PM10)
+havaK$PM10 <- as.numeric(havaK$PM10)
+havaK$PM2.5 <- as.numeric((havaK$PM2.5))
+havaK <- havaK[-1,]
+havaK[, -which(names(havaK) == "Time")] <- lapply(havaK[, -which(names(havaK) == "Time")], as.numeric)
+rapor <- head(havaK, 10)
+print(rapor)
 
 ```
 
 ## Egzersiz 3 - Veri Görselleme
 *dygraphs* paketini kullanarak veri setinizde bulunan iki farklı parametreyi aynı grafik üzerinde iki değişik aks kullanarak (bkz örnek) çizin.
 
-![](graphic_example.png "İki akslı grafik örneği")
+![](Rplot01.png "İki akslı grafik örneği")
 
 
 ```{r}
 library(dygraphs)
-#  <kodu tamamla>
+graph <- dygraph(havaK)
+graph <- dyAxis(graph, "y", "Parametre1", label = "Parametre1")
+graph <- dyAxis(graph, "y", "Parametre2", label = "Parametre2", independentTicks = TRUE)
+graph <- dyOptions(graph, stackedGraph = FALSE)
+graph
+
 ```
